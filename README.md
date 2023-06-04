@@ -1,11 +1,25 @@
-# Instalación y ejecución
+# Prueba técnica react
+
+## Instalación y ejecución
 
 ```bash
 npm install
 npm run dev
 ```
 
-# Preguntas
+## Ejecutar tests
+
+```bash
+npm test
+```
+
+## Ejecutar Storybook
+
+```bash
+npm run storybook
+```
+
+## Preguntas
 
 1. ¿Cómo decidiste las opciones técnicas y arquitectónicas utilizadas como parte de su solución?
 
