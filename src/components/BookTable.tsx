@@ -12,6 +12,7 @@ import {
   getFacetedMinMaxValues,
   getPaginationRowModel,
   getSortedRowModel,
+  SortingState,
   flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
@@ -34,6 +35,7 @@ const columns = [
   columnHelper.accessor("name", {
     header: "Nombre",
     cell: (info) => info.getValue(),
+    enableSorting: true,
   }),
   columnHelper.accessor("authors", {
     header: "Autor(es)",
@@ -47,11 +49,14 @@ const columns = [
 ];
 
 function BooksTable({ data }: { data: BookTableInfo[] }) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+
   const navigate = useNavigate();
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const favorites = useSelector((state: RootState) => state.favorites.value);
+
   const dispatch = useDispatch();
 
   const table = useReactTable({
@@ -59,7 +64,9 @@ function BooksTable({ data }: { data: BookTableInfo[] }) {
     columns,
     state: {
       columnFilters,
+      sorting,
     },
+    onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -75,7 +82,11 @@ function BooksTable({ data }: { data: BookTableInfo[] }) {
 
   return (
     <>
-      <div className="w-full flex flex-row justify-center">
+      <div className="w-full flex flex-col justify-center items-center">
+        <h3>
+          (*) Haga click en el nombre de una columna para ordenar de forma
+          creciente/decreciente
+        </h3>
         <div className="border-0 rounded-md overflow-hidden w-full lg:w-[60rem] m-3">
           <table className="bg-[#fefdf6] border-colapse w-full text-lg">
             <thead className="bg-[#8d2827] text-white">
@@ -84,13 +95,29 @@ function BooksTable({ data }: { data: BookTableInfo[] }) {
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
+                      colSpan={header.colSpan}
                       className="text-left py-1 [&:nth-child(1)]:w-1/12 [&:nth-child(4)]:w-3/12 w-4/12 h-16 [&:nth-child(1)]:pl-3 [&:nth-child(4)]:hidden sm:[&:nth-child(4)]:block"
                     >
-                      <div className="h-full">
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      <div className="h-full ">
+                        <span
+                          className="hover:cursor-pointer"
+                          onClick={(e) => {
+                            const toggle =
+                              header.column.getToggleSortingHandler();
+                            if (toggle != null) {
+                              toggle(e);
+                            }
+                          }}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {{
+                            asc: " 🔼",
+                            desc: " 🔽",
+                          }[header.column.getIsSorted() as string] ?? null}
+                        </span>
 
                         {header.column.getCanFilter() ? (
                           <div>
