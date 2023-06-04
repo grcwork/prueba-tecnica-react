@@ -33,6 +33,12 @@ function Form() {
               name="released"
               className="border border-gray-300 outline-none h-8"
             ></input>
+            <input
+              type="submit"
+              value="Enviar"
+              onClick={(e) => e.preventDefault()}
+              className="border-2 border-[#8d2827] h-10 hover:bg-[#8d2827] hover:text-white hover:cursor-pointer"
+            />
           </form>
         </div>
       </div>
